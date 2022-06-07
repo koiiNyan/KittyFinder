@@ -7,18 +7,25 @@ namespace KittyFinder
     {
         [SerializeField]
         private GameObject _circle;
-        [SerializeField]
-        private bool _isNotClicked = true;
+
+        public bool IsNotClicked { get; private set; } = true;
 
         public event ClickEventHandler OnClickEventHandler;
         public void OnPointerClick(PointerEventData eventData)
         {
             Debug.Log("Clicked Kitty");
             _circle.SetActive(true);
-            if (_isNotClicked) OnClickEventHandler?.Invoke(this);
-            _isNotClicked = false;
+            if (IsNotClicked) OnClickEventHandler?.Invoke(this);
+            IsNotClicked = false;
         }
 
         public delegate void ClickEventHandler(Kitty kittyComponent);
+
+        public void SetKittyActivity(bool isNotClicked)
+        {
+            IsNotClicked = isNotClicked;
+            _circle.SetActive(!isNotClicked);
+
+        }
     }
 }

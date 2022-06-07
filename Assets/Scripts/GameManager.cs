@@ -14,6 +14,7 @@ namespace KittyFinder
         private void Awake()
         {
             FollowEvents();
+            LoadKitties();
         }
 
         private void FollowEvents()
@@ -27,13 +28,60 @@ namespace KittyFinder
         private void KittyClicked(Kitty kitty)
         {
             Debug.Log($"Kitty {kitty} Clicked");
-            SetKittyNumber();
+            SetKittyNumber(_kittiesLeft-1);
         }
 
-        private void SetKittyNumber()
+        private void SetKittyNumber(int kittyNumber)
         {
-            _kittiesLeft--;
+            _kittiesLeft = kittyNumber;
             _kittiesNumberText.text = _kittiesLeft.ToString();
         }
+
+        public void ExitGameButton()
+        {
+#if UNITY_EDITOR
+            Debug.Log("EXIT");
+            UnityEditor.EditorApplication.isPlaying = false;
+
+#else
+            Application.Quit();
+#endif
+            SaveKitties();
+        }
+
+        private void SaveKitties()
+        {
+            string path = Application.persistentDataPath + "/savefile.json";
+            Debug.Log(path);
+
+            foreach (Kitty kitty in _kitties)
+            {
+                SaveLoad.SaveKitty(kitty.name, kitty.IsNotClicked, _kittiesLeft);
+            }
+        }
+
+
+        private void LoadKitties()
+        {
+            KittyTable kittyTable = SaveLoad.LoadKitties();
+            if (kittyTable == null) return;
+
+            foreach (KittyData kittyData in kittyTable.Kitties)
+            {
+                foreach (Kitty kitty in _kitties)
+                {
+                    if (kittyData.Name == kitty.name)
+                    {
+                        Debug.Log(kittyData.Name);
+                        Debug.Log(kittyData.IsNotClicked);
+                        kitty.SetKittyActivity(kittyData.IsNotClicked);
+                    }
+                }
+            }
+
+            SetKittyNumber(kittyTable.KittiesLeft);
+
+
+        }    
     }
 }
