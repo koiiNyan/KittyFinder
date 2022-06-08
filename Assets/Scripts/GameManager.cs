@@ -30,6 +30,7 @@ namespace KittyFinder
         {
             Debug.Log($"Kitty {kitty} Clicked");
             SetKittyNumber(_kittiesLeft-1);
+            Debug.Log(_kittiesLeft - 1);
         }
 
         private void SetKittyNumber(int kittyNumber)
@@ -52,6 +53,7 @@ namespace KittyFinder
 
         public void RestartGameButton()
         {
+            Debug.Log("Restart");
             SetKittyNumber(c_originalKittiesLeft);
 
             foreach(Kitty kitty in _kitties)
