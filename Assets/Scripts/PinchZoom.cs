@@ -7,34 +7,29 @@ using UnityEngine.UI;
 public class PinchZoom : MonoBehaviour, IDragHandler, IEndDragHandler, IBeginDragHandler
 {
     [SerializeField]
-    private float zoomSpeedPinch = 0.001f;
+    private float _zoomSpeedPinch = 0.001f;
     [SerializeField]
-    private float zoomSpeedMouseScrollWheel = 0.05f;
+    private float _moveSpeed = 0.05f;
     [SerializeField]
-    private float zoomMin = 0.1f;
+    private float _zoomMin = 0.1f;
     [SerializeField]
-    private float zoomMax = 1f;
+    private float _zoomMax = 1f;
+    private RectTransform _rectTransform;
+    private Vector3 _originalPosition;
     [SerializeField]
-    private RectTransform rectTransform;
-    [SerializeField]
-    private ScrollRect scrollRect;
+    private ScrollRect _scrollRect;
 
-    void Zoom()
+
+
+    private void Awake()
+    {
+        _rectTransform = GetComponent<RectTransform>();
+        _originalPosition = _rectTransform.localPosition;
+    }
+
+   private void Zoom()
     {
         float scaleChange = 0f;
-
-
-        Vector2 direction;
-        //float speed;
-
-        if (Input.touches[0].phase == TouchPhase.Moved)//Check if Touch has moved.
-        {
-            direction = Input.touches[0].deltaPosition.normalized;  //Unit Vector of change in position
-            //speed = Input.touches[0].deltaPosition.magnitude / Input.touches[0].deltaTime; //distance traveled divided by time elapsed
-            //transform.position += i
-            Debug.Log($"direction = {direction}");
-        }
-
 
         if (Input.touchCount == 2)
         {
@@ -49,7 +44,7 @@ public class PinchZoom : MonoBehaviour, IDragHandler, IEndDragHandler, IBeginDra
 
             float deltaMagnitudeDiff = touchDeltaMag - prevTouchDeltaMag;
 
-            scaleChange = deltaMagnitudeDiff * zoomSpeedPinch;
+            scaleChange = deltaMagnitudeDiff * _zoomSpeedPinch;
 
         }
 
@@ -59,10 +54,10 @@ public class PinchZoom : MonoBehaviour, IDragHandler, IEndDragHandler, IBeginDra
         {
             var scaleX = transform.localScale.x;
             scaleX += scaleChange;
-            scaleX = Mathf.Clamp(scaleX, zoomMin, zoomMax);
-            var size = rectTransform.rect.size;
-            size.Scale(rectTransform.localScale);
-            var parentRect = ((RectTransform)rectTransform.parent);
+            scaleX = Mathf.Clamp(scaleX, _zoomMin, _zoomMax);
+            var size = _rectTransform.rect.size;
+            size.Scale(_rectTransform.localScale);
+            var parentRect = ((RectTransform)_rectTransform.parent);
             var parentSize = parentRect.rect.size;
             parentSize.Scale(parentRect.localScale);
 
@@ -71,28 +66,42 @@ public class PinchZoom : MonoBehaviour, IDragHandler, IEndDragHandler, IBeginDra
     }
 
 
-    // please note that scrollRect is the component on the scroll view game object, not where this script is
+    private void MoveWhileZoomed()
+    {
+        if (Input.touchCount == 1 && Input.touches[0].phase == TouchPhase.Moved && transform.localScale.x != 1)
+        {
+            Vector3 direction;
+            direction = Input.touches[0].deltaPosition.normalized;  //Unit Vector of change in position
+            //speed = Input.touches[0].deltaPosition.magnitude / Input.touches[0].deltaTime; //distance traveled divided by time elapsed
+            transform.position += direction * _moveSpeed;
+            Debug.Log($"direction = {direction}");
+        }
+
+
+        if (transform.localScale.x == 1) transform.localPosition = new Vector3(_originalPosition.x, transform.localPosition.y, transform.localPosition.z);
+
+    }
+
+ 
 
     public void OnDrag(PointerEventData eventData)
     {
         Debug.Log("OnDrag");
         Zoom();
-        if (Input.touchCount <= 1) scrollRect.OnDrag(eventData);
+        MoveWhileZoomed();
+        if (Input.touchCount <= 1) _scrollRect.OnDrag(eventData);
     }
 
     public void OnEndDrag(PointerEventData eventData)
     {
         Debug.Log("OnEndDrag");
-
-        
-
-        scrollRect.OnEndDrag(eventData);
+        _scrollRect.OnEndDrag(eventData);
     }
 
     public void OnBeginDrag(PointerEventData eventData)
     {
         Debug.Log("OnBeginDrag");
-        if (Input.touchCount <= 1) scrollRect.OnBeginDrag(eventData);
+        if (Input.touchCount <= 1) _scrollRect.OnBeginDrag(eventData);
     }
 
 }
