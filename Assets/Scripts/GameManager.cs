@@ -6,10 +6,11 @@ namespace KittyFinder
     public class GameManager : MonoBehaviour
     {
         [SerializeField]
-        private static Kitty[] _kitties;
+        private Kitty[] _kitties;
         [SerializeField]
         private Text _kittiesNumberText;
-        private static int _kittiesLeft = 50;
+        private int _kittiesLeft = 50;
+        private const int c_originalKittiesLeft = 50;
 
         private void Awake()
         {
@@ -49,7 +50,17 @@ namespace KittyFinder
             SaveKitties();
         }
 
-        private static void OnApplicationPause(bool pause)
+        public void RestartGameButton()
+        {
+            SetKittyNumber(c_originalKittiesLeft);
+
+            foreach(Kitty kitty in _kitties)
+            {
+                kitty.SetKittyActivity(true);
+            }
+        }
+
+        private void OnApplicationPause(bool pause)
         {
             if (pause)
                 SaveKitties();
@@ -62,7 +73,7 @@ namespace KittyFinder
                 SaveKitties();
         }
 
-        private static void SaveKitties()
+        private void SaveKitties()
         {
             string path = Application.persistentDataPath + "/savefile.json";
             Debug.Log(path);
