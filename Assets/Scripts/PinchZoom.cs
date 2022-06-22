@@ -27,7 +27,11 @@ public class PinchZoom : MonoBehaviour, IDragHandler, IEndDragHandler, IBeginDra
         _originalPosition = _rectTransform.localPosition;
     }
 
-   private void Zoom()
+   // private void Update()
+   // {
+   //     Debug.Log(transform.localPosition.x);
+   // }
+    private void Zoom()
     {
         float scaleChange = 0f;
 
@@ -71,8 +75,7 @@ public class PinchZoom : MonoBehaviour, IDragHandler, IEndDragHandler, IBeginDra
         if (Input.touchCount == 1 && Input.touches[0].phase == TouchPhase.Moved && transform.localScale.x != 1)
         {
             Vector3 direction;
-            direction = Input.touches[0].deltaPosition.normalized;  //Unit Vector of change in position
-            //speed = Input.touches[0].deltaPosition.magnitude / Input.touches[0].deltaTime; //distance traveled divided by time elapsed
+            direction = Input.touches[0].deltaPosition.normalized;
             transform.position += direction * _moveSpeed;
             Debug.Log($"direction = {direction}");
         }
@@ -80,9 +83,38 @@ public class PinchZoom : MonoBehaviour, IDragHandler, IEndDragHandler, IBeginDra
 
         if (transform.localScale.x == 1) transform.localPosition = new Vector3(_originalPosition.x, transform.localPosition.y, transform.localPosition.z);
 
+        // If not in bounds, return on bouund pos  NEED TESTING!!!!!!!!!
+        //  else if (transform.localScale.x <= 2)  leftboundx=1091.5 rightboundx = -1108.5
+        // else if (transform.localScale.x <= 3)  leftboundx=2291.5 rightboundx = -2108.5
+        // else if (transform.localScale.x <= 4)  leftboundx=3491.5 rightboundx = -3308.5
+        // else if (transform.localScale.x <= 5)  leftboundx=4691.5 rightboundx = -4508.5  localpos.x
+
+        else if (transform.localScale.x <= 2)
+        {
+            if (transform.localPosition.x >= 400) transform.localPosition = new Vector3(400f, transform.localPosition.y, transform.localPosition.z);
+            if (transform.localPosition.x <= -400) transform.localPosition = new Vector3(-400f, transform.localPosition.y, transform.localPosition.z);
+        }
+
+        else if (transform.localScale.x <= 3)
+        {
+            if (transform.localPosition.x >= 1400) transform.localPosition = new Vector3(1400f, transform.localPosition.y, transform.localPosition.z);
+            if (transform.localPosition.x <= -1400) transform.localPosition = new Vector3(-1400f, transform.localPosition.y, transform.localPosition.z);
+        }
+
+        else if (transform.localScale.x <= 4)
+        {
+            if (transform.localPosition.x >= 2400) transform.localPosition = new Vector3(2400f, transform.localPosition.y, transform.localPosition.z);
+            if (transform.localPosition.x <= -2400) transform.localPosition = new Vector3(-2400f, transform.localPosition.y, transform.localPosition.z);
+        }
+
+        else if (transform.localScale.x <= 5)
+        {
+            if (transform.localPosition.x >= 3400) transform.localPosition = new Vector3(3400f, transform.localPosition.y, transform.localPosition.z);
+            if (transform.localPosition.x <= -3400) transform.localPosition = new Vector3(-3400f, transform.localPosition.y, transform.localPosition.z);
+        }
     }
 
- 
+
 
     public void OnDrag(PointerEventData eventData)
     {

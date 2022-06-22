@@ -1049,7 +1049,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _zoomSpeedPinch: 0.001
-  _moveSpeed: 0.05
+  _moveSpeed: 0.09
   _zoomMin: 1
   _zoomMax: 5
   _scrollRect: {fileID: 894144861}
@@ -1171,7 +1171,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -570, y: -720.66406}
+  m_AnchoredPosition: {x: -693, y: -711}
   m_SizeDelta: {x: 290.0418, y: 233.2069}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1745601286
